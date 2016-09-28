@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit webJarAssets: WebJarAssets)
 
 <!DOCTYPE html>
 
@@ -6,8 +6,8 @@
   <head>
     <title>@title</title>
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("css/main.css")">
-    <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))'>
-    <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("css/font-awesome.css"))'>
+    <link rel='stylesheet' href='@routes.WebJarAssets.at(webJarAssets.locate("css/bootstrap.min.css"))'>
+    <link rel='stylesheet' href='@routes.WebJarAssets.at(webJarAssets.locate("css/font-awesome.css"))'>
   </head>
   <body>
 
@@ -16,9 +16,9 @@
 
     <!-- Bootstrap core JavaScript ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))"></script>
+    <script src="@routes.WebJarAssets.at(webJarAssets.locate("jquery.min.js"))"></script>
     <!-- Latest compiled and minified JavaScript -->
-    <script src="@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.js"))"></script>
+    <script src="@routes.WebJarAssets.at(webJarAssets.locate("bootstrap.min.js"))"></script>
 
   </body>
 </html>

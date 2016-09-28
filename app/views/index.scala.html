@@ -1,8 +1,9 @@
 @(taskForm: Form[JSONSchema],
  resultForms: List[Form[AnnotatedJSON]],
- defaultKey: String)
+ defaultKey: String)(implicit webJarAssets: WebJarAssets, messages: Messages)
 
 @import helper._
+@import play.api.i18n.Messages
 
 @main("Clojure Javascript Annotator") {
 

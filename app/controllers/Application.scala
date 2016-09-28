@@ -1,14 +1,17 @@
 package controllers
 
 import annotated.JSONAnnotator
+import javax.inject.Inject
 import models.{AnnotatedJSON, JSONSchema}
 
 import play.api._
+import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 
-object Application extends Controller {
+class Application @Inject() (implicit val webJarAssets: WebJarAssets, val messagesApi: MessagesApi)
+  extends Controller with I18nSupport {
 
   def taskForm = Form (
     mapping(

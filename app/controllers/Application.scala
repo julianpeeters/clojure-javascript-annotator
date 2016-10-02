@@ -6,10 +6,12 @@ import models.{AnnotatedJSON, JSONSchema}
 
 import play.api._
 import play.api.i18n.{MessagesApi, I18nSupport}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+
+import scala.util.{Failure, Success, Try}
 
 class Application @Inject() (implicit val webJarAssets: WebJarAssets, val messagesApi: MessagesApi)
   extends Controller with I18nSupport {
@@ -35,35 +37,47 @@ class Application @Inject() (implicit val webJarAssets: WebJarAssets, val messag
   }
 
   def generate = Action { implicit request =>
-    // bindFromRequest uncontrollably splits at ','
-    val query: String =
+    val queryString: String =
       request
         .queryString
         .get(schemaKey)
         .map(_.mkString(","))
         .getOrElse("no input found")
-
-    taskForm
-      .bind(Json.parse(query))
-      .copy(value = Some(JSONSchema(Some(query))))
-      .fold(
-        errors => defaultView,
-        jsonSchema => {
-          jsonSchema match {
-            case JSONSchema(Some(schemaStr)) => {
-              val annotated = JSONAnnotator.generateAnnotatedExample(schemaStr)
-              // update the result form(s)
-              val resultsForms = annotated.map(cd => {
-                resultsForm.fill(AnnotatedJSON(Some(cd)))
-              })
-              // keep the input form as it looked upon submission
-              val filledTaskForm = taskForm.fill(JSONSchema(Some(schemaStr)))
-              Ok(views.html.index(filledTaskForm, resultsForms, "example"))
-            }
-            case _ => defaultView
-          }
-        }
-      )
+    val tryJsonParse = Try(Json.parse(queryString))
+    // val boundTaskForm = taskForm
+    //   .bind(queryJSON)// bindFromRequest uncontrollably splits at ',' so bind manually
+    //   .copy(value = Some(JSONSchema(Some(queryString))))
+    // boundTaskForm.fold(
+    //   errors => defaultView,
+    //   jsonSchema => {
+    //     jsonSchema match {
+    //       case JSONSchema(Some(schemaStr)) => {
+    //         val annotated = JSONAnnotator.generateAnnotatedExample(queryJSON)
+    //         // update the result form(s)
+    //         val resultsForms = annotated.map(obj => {
+    //           resultsForm.fill(AnnotatedJSON(Some(Json.prettyPrint(obj))))
+    //         })
+    //         // keep the input form as it looked upon submission
+    //         val filledTaskForm = taskForm.fill(JSONSchema(Some(schemaStr)))
+    //         Ok(views.html.index(filledTaskForm, resultsForms, "example"))
+    //       }
+    //       case _ => defaultView
+    //     }
+    //   }
+    // )
+    tryJsonParse match {
+      case Success(jsValue) => {
+        val annotated = JSONAnnotator.generateAnnotatedExample(jsValue)
+        // update the result form(s)
+        val resultsForms = annotated.map(obj => {
+          resultsForm.fill(AnnotatedJSON(Some(Json.prettyPrint(obj))))
+        })
+        // keep the input form as it looked upon submission
+        val filledTaskForm = taskForm.fill(JSONSchema(Some(queryString)))
+        Ok(views.html.index(filledTaskForm, resultsForms, "example"))
+      }
+      case Failure(e) => defaultView
+    }
   }
 
 }

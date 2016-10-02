@@ -44,27 +44,6 @@ class Application @Inject() (implicit val webJarAssets: WebJarAssets, val messag
         .map(_.mkString(","))
         .getOrElse("no input found")
     val tryJsonParse = Try(Json.parse(queryString))
-    // val boundTaskForm = taskForm
-    //   .bind(queryJSON)// bindFromRequest uncontrollably splits at ',' so bind manually
-    //   .copy(value = Some(JSONSchema(Some(queryString))))
-    // boundTaskForm.fold(
-    //   errors => defaultView,
-    //   jsonSchema => {
-    //     jsonSchema match {
-    //       case JSONSchema(Some(schemaStr)) => {
-    //         val annotated = JSONAnnotator.generateAnnotatedExample(queryJSON)
-    //         // update the result form(s)
-    //         val resultsForms = annotated.map(obj => {
-    //           resultsForm.fill(AnnotatedJSON(Some(Json.prettyPrint(obj))))
-    //         })
-    //         // keep the input form as it looked upon submission
-    //         val filledTaskForm = taskForm.fill(JSONSchema(Some(schemaStr)))
-    //         Ok(views.html.index(filledTaskForm, resultsForms, "example"))
-    //       }
-    //       case _ => defaultView
-    //     }
-    //   }
-    // )
     tryJsonParse match {
       case Success(jsValue) => {
         val annotated = JSONAnnotator.generateAnnotatedExample(jsValue)

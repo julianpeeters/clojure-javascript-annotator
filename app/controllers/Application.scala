@@ -1,8 +1,8 @@
 package controllers
 
-import annotated.JSONAnnotator
+import annotator.JSONAnnotator
 import javax.inject.Inject
-import models.{AnnotatedJSON, JSONSchema}
+import models._//{AnnotatedJSON, DocResult, JSONSchema}
 
 import play.api._
 import play.api.i18n.{MessagesApi, I18nSupport}
@@ -24,13 +24,21 @@ class Application @Inject() (implicit val webJarAssets: WebJarAssets, val messag
     )(JSONSchema.apply)(JSONSchema.unapply)
   )
 
-  def resultsForm = Form (
+  // def resultsForm = Form (
+  //   mapping(
+  //     "jsons" -> text
+  //   )(AnnotatedJSON.apply)(AnnotatedJSON.unapply)
+  // )
+
+  def resultsForm = Form(
     mapping(
-      "example" -> optional(text)
-    )(AnnotatedJSON.apply)(AnnotatedJSON.unapply)
+      "returnedData" -> text,
+      "exampleResponse" -> text,
+      "types" -> text
+    )(DocResult.apply)(DocResult.unapply)
   )
 
-  val defaultView = Ok(views.html.index(taskForm, List(resultsForm), ""))
+  val defaultView = Ok(views.html.index(taskForm, List(resultsForm)))
 
   def index = Action {
     defaultView
@@ -46,14 +54,13 @@ class Application @Inject() (implicit val webJarAssets: WebJarAssets, val messag
     val tryJsonParse = Try(Json.parse(queryString))
     tryJsonParse match {
       case Success(jsValue) => {
-        val annotated = JSONAnnotator.generateAnnotatedExample(jsValue)
+        // generate result
+        val docResult = JSONAnnotator.generateDocsFromSchema(jsValue)
         // update the result form(s)
-        val resultsForms = annotated.map(obj => {
-          resultsForm.fill(AnnotatedJSON(Some(Json.prettyPrint(obj))))
-        })
+        val resultsForms = List(resultsForm.fill(docResult))
         // keep the input form as it looked upon submission
         val filledTaskForm = taskForm.fill(JSONSchema(Some(queryString)))
-        Ok(views.html.index(filledTaskForm, resultsForms, "example"))
+        Ok(views.html.index(filledTaskForm, resultsForms))
       }
       case Failure(e) => defaultView
     }

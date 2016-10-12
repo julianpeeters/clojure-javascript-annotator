@@ -1,6 +1,5 @@
 @(taskForm: Form[JSONSchema],
- resultForms: List[Form[AnnotatedJSON]],
- defaultKey: String)(implicit webJarAssets: WebJarAssets, messages: Messages)
+ resultForms: List[Form[DocResult]])(implicit webJarAssets: WebJarAssets, messages: Messages)
 
 @import helper._
 @import play.api.i18n.Messages
@@ -44,19 +43,41 @@
 
             @resultForms.zipWithIndex.map{ rf =>
               <div class="row-fluid">
-                <div class="span12">
+                <div id="returneddata" class="span12">
                   @textarea(
-                      rf._1(defaultKey),
-                      '_label -> {
-                        if (resultForms.length == 1) "Annotated example"
-                        else "Annotated example " + (rf._2 + 1) + " of " + resultForms.length
-                      },
+                      rf._1("returnedData"),
+                      '_label -> "Returned Data",
                       'placeholder -> "here is the result",
                       'rows -> 8,
                       'class -> "row-fluid"
                   )
                 </div><!--/span-->
               </div><!--/row-->
+
+              <div class="row-fluid">
+                <div id="exampleresponse" class="span12">
+                  @textarea(
+                      rf._1("exampleResponse"),
+                      '_label -> "Example Response",
+                      'placeholder -> "here is the result",
+                      'rows -> 8,
+                      'class -> "row-fluid"
+                  )
+                </div><!--/span-->
+              </div><!--/row-->
+
+              <div class="row-fluid">
+                <div id="annotatedtypes" class="span12">
+                  @textarea(
+                      rf._1("types"),
+                      '_label -> "Types",
+                      'placeholder -> "here is the result",
+                      'rows -> 8,
+                      'class -> "row-fluid"
+                  )
+                </div><!--/span-->
+              </div><!--/row-->
+
             }
 
           </div>
@@ -65,6 +86,7 @@
 
       </div>
       <hr>
+
 
       <footer>
         <p>This software is licensed under Apache 2.0 and was adapted from <a href="http://json2caseclass.cleverapps.io/">json2caseclass</a>.

@@ -1,11 +1,13 @@
 package controllers
-package annotator
+package generator
 
-import controllers.annotator.generator.{ExampleResponse, ReturnedData, Types}
+import controllers.generator.example.ExampleResponse
+import controllers.generator.returned.ReturnedData
+import controllers.generator.types.Types
 import models.DocResult
 import play.api.libs.json.{Json, JsArray, JsObject, JsValue}
 
-object JSONAnnotator {
+object JSONDocGenerator {
 
   def generateDocsFromSchema(jsonSchema: JsValue): DocResult = {
     val returnedData = ReturnedData.generate(jsonSchema)

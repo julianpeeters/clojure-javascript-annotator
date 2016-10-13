@@ -1,5 +1,6 @@
 package controllers
-package annotator
+package generator
+package util
 
 import models.{JsonString, LangString}
 

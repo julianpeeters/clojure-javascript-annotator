@@ -1,13 +1,13 @@
 package controllers
-package annotator
 package generator
+package example
 
 import play.api.libs.json.{Json, JsArray, JsObject, JsValue}
 
-object Types {
+object ExampleResponse {
 
   def generate(jsonSchema: JsValue): String = {
-    "Types"
+    "Example"
   }
 
 }

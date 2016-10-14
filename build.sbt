@@ -9,6 +9,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala).settings()
 libraryDependencies ++= Seq(
   jdbc,
   cache,
+  "com.eaio.uuid" % "uuid" % "3.2",
   "com.typesafe.play" %% "anorm" % "2.4.0",
   "org.webjars" %% "webjars-play" % "2.5.0",
   "org.webjars" % "bootstrap" % "2.3.0",
